@@ -1,2 +1,2 @@
 # Introduction-to-Robotics
-This repository was made to upload projects for my Robotics course.
+This repository was made for uploading projects from my Robotics course.
