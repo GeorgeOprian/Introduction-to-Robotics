@@ -17,9 +17,9 @@ int bluePotValue = 0;
 int blueLedValue = 0;
 
 void setup() {
-  pinMode (redLedPin, OUTPUT);
-  pinMode (greenLedPin, OUTPUT);
-  pinMode (blueLedPin, OUTPUT);
+  pinMode(redLedPin, OUTPUT);
+  pinMode(greenLedPin, OUTPUT);
+  pinMode(blueLedPin, OUTPUT);
   Serial.begin(9600);
 }
 
@@ -35,7 +35,7 @@ void loop() {
   
   setColor(redLedValue, greenLedValue, blueLedValue);
 }
-void setColor (int redValue, int greenValue, int blueValue)
+void setColor(int redValue, int greenValue, int blueValue)
 {
   analogWrite(redLedPin, redValue);
   analogWrite(greenLedPin, greenValue);
