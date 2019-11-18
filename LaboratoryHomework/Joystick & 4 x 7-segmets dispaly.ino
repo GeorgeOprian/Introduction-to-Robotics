@@ -1,6 +1,5 @@
-//DP lighted up on digit
-const int pinX = A1; // A0 - analog pin connected to X output
-const int pinY = A0; // A1 - analog pin connected to Y output
+const int pinX = A0; // A0 - analog pin connected to X output
+const int pinY = A1; // A1 - analog pin connected to Y output
 const int pinSw = A2; // digital pin connected to switch output
 
 const int pinA = 12;
@@ -21,17 +20,19 @@ const int segSize = 8;
 const int noOfDisplays = 4;
 const int noOfDigits = 10;
 const int lowThreshold = 200;
-const int highThreshold = 700; 
+const int highThreshold = 700;
 
 int dpState = LOW;
 
 int numberOnDigit = 0;
 int currentDigit = 0;
-
 int switchValue = 0;
 int xValue = 0;
 int yValue = 0;
 int digit = 3;
+
+int currentMillis = 0;
+int previousMillis = 0;
 
 bool joyMovedX = false;
 bool joyMovedY = false;
@@ -43,7 +44,7 @@ int segments[segSize] = {
 };
 
 byte digitMatrix[noOfDigits][segSize - 1] = {
-// a  b  c  d  e  f  g
+  // a  b  c  d  e  f  g
   {1, 1, 1, 1, 1, 1, 0}, // 0
   {0, 1, 1, 0, 0, 0, 0}, // 1
   {1, 1, 0, 1, 1, 0, 1}, // 2
@@ -57,25 +58,25 @@ byte digitMatrix[noOfDigits][segSize - 1] = {
 };
 
 int digits[noOfDisplays] = {
-  pinD4, pinD3, pinD2, pinD1 
-};   
+  pinD4, pinD3, pinD2, pinD1
+};
 int digitValue[noOfDisplays] = {
   0, 0, 0, 0
-  };
-
+};
+int blinkInterval = 50;
 void displayNumber(byte digit, byte decimalPoint) {
+  //int currentMillis = 0;
   for (int i = 0; i < segSize - 1; i++) {
-  digitalWrite(segments[i], digitMatrix[digit][i]);
+    digitalWrite(segments[i], digitMatrix[digit][i]);
   }
-  
-  digitalWrite(segments[segSize - 1], decimalPoint);
-  
+  digitalWrite(segments[segSize - 1], LOW);
 }
 
 // activate the display no. received as param
 void showDigit(int num) {
   for (int i = 0; i < noOfDisplays; i++) {
     digitalWrite(digits[i], HIGH);
+
   }
   digitalWrite(digits[num], LOW);
 }
@@ -84,11 +85,11 @@ void showDigit(int num) {
 
 void setup() {
   pinMode(pinSw, INPUT_PULLUP);
-  for (int i = 0; i < segSize - 1; i++){
-    pinMode(segments[i], OUTPUT);  
+  for (int i = 0; i < segSize; i++) {
+    pinMode(segments[i], OUTPUT);
   }
-  for (int i = 0; i < noOfDisplays; i++){
-    pinMode(digits[i], OUTPUT);  
+  for (int i = 0; i < noOfDisplays; i++) {
+    pinMode(digits[i], OUTPUT);
   }
   Serial.begin(9600);
 }
@@ -96,56 +97,47 @@ void setup() {
 void loop() {
   xValue = analogRead(pinX);
   yValue = analogRead(pinY);
-  switchValue = map(analogRead(pinSw), 0, 1023, 0, 255);
-  /*Serial.print("Sw: ");
-  Serial.print(switchValue);
-  Serial.print("   |    ");
-  Serial.print("xVal: ");
-  Serial.print(xValue);
-  Serial.print("   |    ");
-  Serial.print("yVal: ");
-  Serial.print(yValue);*/
-  
-  
-   if (switchValue < 100){
-      switchPressed = !switchPressed;
+  switchValue = digitalRead(pinSw);
+
+  if (switchValue == 0) {
+    switchPressed = !switchPressed;
   }
-  if (switchPressed){
-    if (joyMovedY == false){
-    if (yValue < lowThreshold){
-      if (digitValue[currentDigit] > 0){
-        digitValue[currentDigit]--;
+  if (switchPressed) {
+    if (joyMovedY == false) {
+      if (yValue < lowThreshold) {
+        if (digitValue[currentDigit] > 0) {
+          digitValue[currentDigit]--;
+        }
+        else {
+          digitValue[currentDigit] = 9;
+        }
       }
-      else {
-        digitValue[currentDigit] = 9;
+      if (yValue > highThreshold) {
+        if (digitValue[currentDigit] < 9) {
+          digitValue[currentDigit]++;
+        }
+        else {
+          digitValue[currentDigit] = 0;
+        }
       }
-    }
-    if (yValue > highThreshold){
-      if (digitValue[currentDigit] < 9){
-        digitValue[currentDigit]++;
-      }
-      else {
-        digitValue[currentDigit] = 0;
-      }
-    }
-    joyMovedY = true;
+      joyMovedY = true;
     }
     if (yValue >= lowThreshold && yValue <= highThreshold) {
       joyMovedY = false;
     }
   }
   else {
-    if (joyMovedX == false){
-      if (xValue <lowThreshold){
-        if (currentDigit > 0){
+    if (joyMovedX == false) {
+      if (xValue < lowThreshold) {
+        if (currentDigit > 0) {
           currentDigit--;
         }
         else {
           currentDigit = 3;
         }
       }
-      if (xValue > highThreshold){
-        if (currentDigit < 3){
+      if (xValue > highThreshold) {
+        if (currentDigit < 3) {
           currentDigit++;
         }
         else {
@@ -154,34 +146,21 @@ void loop() {
       }
       joyMovedX = true;
     }
-    
+
     if (xValue >= lowThreshold && xValue <= highThreshold) {
       joyMovedX = false;
     }
   }
   
- 
-  /*Serial.print("   |    ");
-  Serial.print("curDig: ");
-  Serial.print(currentDigit + 1);
-  Serial.print("   |    ");
-  Serial.print("nrOnDig: ");
-  Serial.print(digitValue [currentDigit]);
-  Serial.print("   |    ");
-  Serial.print("SP: ");
-  Serial.print(switchPressed);
-  Serial.println("   |  ");*/
-  if (digit >= 0){
+  if (digit >= 0) {
     showDigit(digit);
-    
-    displayNumber(digitValue[digit], HIGH);
 
+    displayNumber(digitValue[digit], HIGH);
+    if (digit == currentDigit) {
+      digitalWrite(pinDP, HIGH);
+    }
     digit--;
-  }else {
+  } else {
     digit = 3;
   }
-  if (digit == currentDigit){
-//    digitalWrite()
-  }
-
 }
