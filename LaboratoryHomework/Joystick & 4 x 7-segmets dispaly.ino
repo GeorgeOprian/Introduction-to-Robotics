@@ -102,16 +102,7 @@ void loop() {
   xValue = analogRead(pinX);
   yValue = analogRead(pinY);
   switchValue = digitalRead(pinSw);
-  /*Serial.print("Sw: ");
-  Serial.print(switchValue);
-  Serial.print("   |    ");
-  Serial.print("xVal: ");
-  Serial.print(xValue);
-  Serial.print("   |    ");
-  Serial.print("yVal: ");
-  Serial.print(yValue);*/
 
-  
   currPressMilis = millis();
   if (switchValue == 0) {
     if (currPressMilis - prevPressMillis >= pressInterval){
@@ -169,17 +160,6 @@ void loop() {
     }
   }
 
-
-  /*Serial.print("   |    ");
-  Serial.print("curDig: ");
-  Serial.print(currentDigit + 1);
-  Serial.print("   |    ");
-  Serial.print("nrOnDig: ");
-  Serial.print(digitValue [currentDigit]);
-  Serial.print("   |    ");
-  Serial.print("SP: ");
-  Serial.print(switchPressed);
-  Serial.println("   |  ");*/
 
   if (digit >= 0) {
     showDigit(digit);
