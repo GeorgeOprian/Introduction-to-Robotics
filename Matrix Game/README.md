@@ -11,6 +11,7 @@ The game logic is simple. You are control a dot an the screen and that dot will 
 How to play?
 
 You control your snake with the joystick:
+
 	-if the snake moves horizontally you can only make him go up or down using the joystick Y axis
 	
 	-if the snakes moves vertically you can only make him go up or down using the joystick X axis
