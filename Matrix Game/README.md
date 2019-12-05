@@ -28,8 +28,11 @@ Requirements
 
 Hardware:
 -8* 8 LED matrix
+
 -LCD
+
 -Joystick
+
 -MAX7219 Driver
 
 
