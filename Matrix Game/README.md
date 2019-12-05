@@ -15,7 +15,8 @@ You control your snake with the joystick:
 	
 	-if the snakes moves vertically you can only make him go up or down using the joystick X axis
 	
-	-to change the game setting you can always use the "Setings" section in the menu. You can adjust the speed of the snake and, also, the type of field.
+	-to change the game setting you can always use the "Setings" section in the menu.
+	You can adjust the speed of the snake and, also, the type of field.
 	
 
 Eating the food spawned will grow your snake in size.
