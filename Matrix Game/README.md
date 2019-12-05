@@ -1,4 +1,4 @@
-#Snake game
+# Snake game
 
 The snake game concept started in 1976 and it exploded in popularity when Nokia added it on their phones.
 
