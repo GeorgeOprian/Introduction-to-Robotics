@@ -24,4 +24,13 @@ Eating the food spawned will grow your snake in size.
 
 Avoid hitting your own tail or the walls, if you hit them the game will be over.
 
+Requirements
+
+Hardware:
+-8* 8 LED matrix
+-LCD
+-Joystick
+-MAX7219 Driver
+
+
 
