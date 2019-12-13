@@ -96,35 +96,30 @@ void newFood(){
     matrix[prevFoodX][prevFoodY] = false;
     foodEaten = false;
   }
+  
 }
 
 void moveSnake(int newX, int newY) {
-  //if(!collision()){
     matrix[snake[lenSnake - 1].x][snake[lenSnake - 1].y] = false; // turns off the last led form tail
     for (int i = lenSnake - 1; i >= 1; i--) {
-      snake[i] = snake[i - 1];
-      matrix[snake[i + 1].x][snake[i + 1].y] = true;
-      
+      snake[i] = snake[i - 1]; 
     }
     if (newX == foodX && newY == foodY) {
         eatFood();
-        //newFood();
-        //matrix[prevFoodX][prevFoodY] = false;
+        newFood();
+        matrix[prevFoodX][prevFoodY] = false;
     }else{
-      if (!foodEaten){
-        //blinkFood();
-      }
-      if(matrix[newX][newY] == 0){ // we don't have collision
+      blinkFood();
+    }
+    if(matrix[newX][newY] == 0){ // we don't have collision
         snake[0].x = newX;
         snake[0].y = newY;
         matrix[newX][newY] = true;
-        //matrix[snake[0].x][snake[0].y] = true;
-      }else{
 
-      }
+    }else{ //collison
+      
     }
-    
-  //}
+  
 
 }
 
@@ -343,10 +338,12 @@ void loop() {
   moveHead();
   // moveSnake();
   //blinkFood();
+  
   printMap();
-  if (foodEaten){
-    newFood();
-  }
+  // if (foodEaten){
+  //   newFood();
+  // }
+
   //delay(00);
   //matrix[prevFoodX][prevFoodY] = false;
   ///snake states
