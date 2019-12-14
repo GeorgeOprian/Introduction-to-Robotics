@@ -19,8 +19,14 @@ const int lowThreshold = 200;
 const int highThreshold = 900;
 
 //snake
+struct bodySegment {
+  int x;
+  int y;
+};
+
+bodySegment snake[63];
 int headX = 3;
-int headY = 2;
+int headY = 3;
 int prevHeadX = 0;
 int prevHeadY = 0;
 bool movesLeft = false;
@@ -31,7 +37,7 @@ int lenSnake = 3;//4;
 
 //food
 bool foodEaten = false;
-int foodX = 2;//2;
+int foodX = 3;//2;
 int foodY = 6;//6;
 int prevFoodX;
 int prevFoodY;
@@ -39,16 +45,8 @@ int blinkFoodInterval = 200;
 int curBlinkFoodMillis = 0;
 int prevBlinkFoodMillis = 0;
 
-
-struct bodySegment {
-  int x;
-  int y;
-};
-
-bodySegment snake[63];
-
-
 //map
+//level 1
 bool matrix[8][8] = {
   {0, 0, 0, 0, 0, 0, 0, 0},
   {0, 0, 0, 0, 0, 0, 0, 0},
@@ -59,10 +57,68 @@ bool matrix[8][8] = {
   {0, 0, 0, 0, 0, 0, 0, 0},
   {0, 0, 0, 0, 0, 0, 0, 0}
 };
+///level 2
+/*bool matrix[8][8] = {
+  {1, 1, 1, 0, 0, 1, 1, 1},
+  {1, 0, 0, 0, 0, 0, 0, 1},
+  {1, 0, 0, 0, 0, 0, 0, 1},
+  {0, 0, 0, 0, 0, 0, 0, 0},
+  {0, 0, 0, 0, 0, 0, 0, 0},
+  {1, 0, 0, 0, 0, 0, 0, 1},
+  {1, 0, 0, 0, 0, 0, 0, 1},
+  {1, 1, 1, 0, 0, 1, 1, 1}
+};*/
+//level 3
+/*bool matrix[8][8] = {
+  {1, 0, 0, 0, 0, 0, 0, 1},
+  {0, 0, 0, 0, 0, 0, 0, 0},
+  {0, 0, 0, 1, 1, 0, 0, 0},
+  {0, 0, 0, 0, 0, 0, 0, 0},
+  {0, 0, 0, 0, 0, 0, 0, 0},
+  {0, 0, 0, 1, 1, 0, 0, 0},
+  {0, 0, 0, 0, 0, 0, 0, 0},
+  {1, 0, 0, 0, 0, 0, 0, 1}
+};*/
+//level 4
+/*bool matrix[8][8] = {
+  {1, 0, 0, 0, 0, 0, 0, 1},
+  {0, 0, 0, 0, 0, 0, 0, 0},
+  {0, 0, 1, 1, 1, 1, 0, 0},
+  {0, 0, 0, 0, 0, 0, 0, 0},
+  {0, 0, 0, 0, 0, 0, 0, 0},
+  {0, 0, 1, 1, 1, 1, 0, 0},
+  {0, 0, 0, 0, 0, 0, 0, 0},
+  {1, 0, 0, 0, 0, 0, 0, 1}
+};*/
 
+//level 5
+/*bool matrix[8][8] = {
+  {1, 1, 0, 0, 0, 0, 1, 1},
+  {1, 0, 0, 0, 0, 0, 0, 1},
+  {0, 0, 1, 1, 1, 1, 0, 0},
+  {0, 0, 0, 0, 0, 0, 0, 0},
+  {0, 0, 0, 0, 0, 0, 0, 0},
+  {0, 0, 1, 1, 1, 1, 0, 0},
+  {1, 0, 0, 0, 0, 0, 0, 1},
+  {1, 1, 0, 0, 0, 0, 1, 1}
+};*/
+
+//gameOver
+bool gameOverMatrix[8][8] = {
+  {1, 0, 0, 0, 0, 0, 0, 1},
+  {0, 1, 0, 0, 0, 0, 1, 0},
+  {0, 0, 1, 0, 0, 1, 0, 0},
+  {0, 0, 0, 1, 1, 0, 0, 0},
+  {0, 0, 0, 1, 1, 0, 0, 0},
+  {0, 0, 1, 0, 0, 1, 0, 0},
+  {0, 1, 0, 0, 0, 0, 1, 0},
+  {1, 0, 0, 0, 0, 0, 0, 1}
+};
+bool gameOver = false;
 
 //translation
-int translationDelay = 175;
+int initialTranslationDelay = 200;//175;
+int currentTranslationDelay = 0;
 
 int currentMillis = 0;
 int previousMillis = 0;
@@ -91,6 +147,10 @@ void newFood(){
   prevFoodY = foodY;
   foodX = random(0, 8);//millis() % 8;
   foodY = random(0, 8);//millis() % 8;
+  while (matrix[foodX][foodY] == true){
+    foodX = random(0, 8);//millis() % 8;
+    foodY = random(0, 8);//millis() % 8;
+  }
   matrix[foodX][foodY] = true;
   if (foodEaten){
     matrix[prevFoodX][prevFoodY] = false;
@@ -106,6 +166,7 @@ void moveSnake(int newX, int newY) {
     }
     if (newX == foodX && newY == foodY) {
         eatFood();
+        currentTranslationDelay -= 5;
         newFood();
         matrix[prevFoodX][prevFoodY] = false;
     }else{
@@ -116,8 +177,12 @@ void moveSnake(int newX, int newY) {
         snake[0].y = newY;
         matrix[newX][newY] = true;
 
-    }else{ //collison
-      
+    }else{
+      if(newX != foodX && newY != foodY){
+        //collision
+        gameOver = true;
+      }
+
     }
   
 
@@ -233,7 +298,7 @@ void moveHead() {
   }
   if (movesLeft) {
     currentMillis = millis();
-    if (currentMillis - previousMillis >= translationDelay) {
+    if (currentMillis - previousMillis >= currentTranslationDelay) {
       moveLeft();
       previousMillis = currentMillis;
     }
@@ -241,7 +306,7 @@ void moveHead() {
   }
   if (movesRight) {
     currentMillis = millis();
-    if (currentMillis - previousMillis >= translationDelay) {
+    if (currentMillis - previousMillis >= currentTranslationDelay) {
       moveRight();
       previousMillis = currentMillis;
     }
@@ -249,7 +314,7 @@ void moveHead() {
   }
   if (movesUp) {
     currentMillis = millis();
-    if (currentMillis - previousMillis >= translationDelay) {
+    if (currentMillis - previousMillis >= currentTranslationDelay) {
       moveUp();
       previousMillis = currentMillis;
     }
@@ -257,7 +322,7 @@ void moveHead() {
   }
   if (movesDown) {
     currentMillis = millis();
-    if (currentMillis - previousMillis >= translationDelay) {
+    if (currentMillis - previousMillis >= currentTranslationDelay) {
       moveDown();
       previousMillis = currentMillis;
     }
@@ -276,6 +341,24 @@ void printMap() {
       //Serial.print(" ");
 
       lc.setLed(0, col, row, matrix[col][row]);
+    }
+    //Serial.println("");
+  }
+  //matrix[prevFoodX][prevFoodY] = false;
+  //Serial.println("");
+
+}
+
+void printGameOverMatrix(){
+  /*if (foodX != 0 && foodY != 0) {
+    matrix[0][0] = 0;
+  }*/
+  for (int row = 0; row < 8; row++) {
+    for (int col = 0; col < 8; col++) {
+      //Serial.print(matrix[row][col]);
+      //Serial.print(" ");
+
+      lc.setLed(0, col, row, gameOverMatrix[col][row]);
     }
     //Serial.println("");
   }
@@ -304,6 +387,7 @@ void setup() {
 
   snake[2].x = headY;
   snake[2].y = headX - 2;
+  currentTranslationDelay = initialTranslationDelay;
   //snake[3].x = headY;
   //snake[3].y = headX - 3;
   //here I put the snake on the map
@@ -335,11 +419,15 @@ void setup() {
 }
 
 void loop() {
-  moveHead();
-  // moveSnake();
-  //blinkFood();
-  
-  printMap();
+  if(!gameOver){
+    moveHead();
+    // moveSnake();
+    //blinkFood();
+    
+    printMap();
+  }else{
+    printGameOverMatrix();
+  }
   // if (foodEaten){
   //   newFood();
   // }
