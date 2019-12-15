@@ -1,5 +1,17 @@
 #include "LedControl.h"
 
+#include <LiquidCrystal.h>
+
+//LCD display
+const int rsPin = 9;
+const int ePin = 8;
+const int d4Pin = 5;
+const int d5Pin = 4;
+const int d6Pin = 3;
+const int d7Pin = 2;
+
+LiquidCrystal lcd(rsPin, ePin, d4Pin, d5Pin, d6Pin, d7Pin);
+
 //LED Matrix
 const int brightness = 1;
 const int dinPin = 12;
@@ -13,6 +25,7 @@ const int pinY = A1;
 const int swPin = A2;
 int xValue = 0;
 int yValue = 0;
+int switchValue = 0;
 bool movedX = false;
 bool movedY = false;
 const int lowThreshold = 200;
@@ -23,8 +36,9 @@ struct bodySegment {
   int x;
   int y;
 };
-
 bodySegment snake[63];
+int initialialHeadX = 3;
+int initialialHeadY = 3;
 int headX = 3;
 int headY = 3;
 int prevHeadX = 0;
@@ -34,6 +48,7 @@ bool movesRight = true;
 bool movesUp = false;
 bool movesDown = false;
 int lenSnake = 3;//4;
+int passLevelLength = 6;//9;
 
 //food
 bool foodEaten = false;
@@ -45,9 +60,16 @@ int blinkFoodInterval = 200;
 int curBlinkFoodMillis = 0;
 int prevBlinkFoodMillis = 0;
 
+//levels
+int level = 1;//2;
+bool levelStarted = false;
+bool youCanPassLevel = false;
+
+
+
 //map
 //level 1
-bool matrix[8][8] = {
+bool lvl1Matrix[8][8] = {
   {0, 0, 0, 0, 0, 0, 0, 0},
   {0, 0, 0, 0, 0, 0, 0, 0},
   {0, 0, 0, 0, 0, 0, 0, 0},
@@ -58,7 +80,7 @@ bool matrix[8][8] = {
   {0, 0, 0, 0, 0, 0, 0, 0}
 };
 ///level 2
-/*bool matrix[8][8] = {
+bool lvl2Matrix[8][8] = {
   {1, 1, 1, 0, 0, 1, 1, 1},
   {1, 0, 0, 0, 0, 0, 0, 1},
   {1, 0, 0, 0, 0, 0, 0, 1},
@@ -67,9 +89,9 @@ bool matrix[8][8] = {
   {1, 0, 0, 0, 0, 0, 0, 1},
   {1, 0, 0, 0, 0, 0, 0, 1},
   {1, 1, 1, 0, 0, 1, 1, 1}
-};*/
+};
 //level 3
-/*bool matrix[8][8] = {
+bool lvl3Matrix[8][8] = {
   {1, 0, 0, 0, 0, 0, 0, 1},
   {0, 0, 0, 0, 0, 0, 0, 0},
   {0, 0, 0, 1, 1, 0, 0, 0},
@@ -78,9 +100,9 @@ bool matrix[8][8] = {
   {0, 0, 0, 1, 1, 0, 0, 0},
   {0, 0, 0, 0, 0, 0, 0, 0},
   {1, 0, 0, 0, 0, 0, 0, 1}
-};*/
+};
 //level 4
-/*bool matrix[8][8] = {
+bool lvl4Matrix[8][8] = {
   {1, 0, 0, 0, 0, 0, 0, 1},
   {0, 0, 0, 0, 0, 0, 0, 0},
   {0, 0, 1, 1, 1, 1, 0, 0},
@@ -89,10 +111,10 @@ bool matrix[8][8] = {
   {0, 0, 1, 1, 1, 1, 0, 0},
   {0, 0, 0, 0, 0, 0, 0, 0},
   {1, 0, 0, 0, 0, 0, 0, 1}
-};*/
+};
 
 //level 5
-/*bool matrix[8][8] = {
+bool lvl5Matrix[8][8] = {
   {1, 1, 0, 0, 0, 0, 1, 1},
   {1, 0, 0, 0, 0, 0, 0, 1},
   {0, 0, 1, 1, 1, 1, 0, 0},
@@ -101,9 +123,9 @@ bool matrix[8][8] = {
   {0, 0, 1, 1, 1, 1, 0, 0},
   {1, 0, 0, 0, 0, 0, 0, 1},
   {1, 1, 0, 0, 0, 0, 1, 1}
-};*/
+};
 
-//gameOver
+
 bool gameOverMatrix[8][8] = {
   {1, 0, 0, 0, 0, 0, 0, 1},
   {0, 1, 0, 0, 0, 0, 1, 0},
@@ -126,245 +148,21 @@ int previousMillis = 0;
 
 LedControl lc = LedControl(dinPin, clkPin, loadPin, noOfDrivers);
 
-void blinkFood() {
-  curBlinkFoodMillis = millis();
-  if (curBlinkFoodMillis - prevBlinkFoodMillis >= blinkFoodInterval) {
-    prevBlinkFoodMillis = curBlinkFoodMillis;
-    matrix[foodX][foodY] = !matrix[foodX][foodY];
-  }
-}
-
-void eatFood () {
-  snake[lenSnake].x = snake[lenSnake - 1].x;
-  snake[lenSnake].y = snake[lenSnake - 1].y;
-  matrix[snake[lenSnake].x][snake[lenSnake].y] = true;
-  lenSnake++;
-  foodEaten = true;
-}
-
-void newFood(){
-  prevFoodX = foodX;
-  prevFoodY = foodY;
-  foodX = random(0, 8);//millis() % 8;
-  foodY = random(0, 8);//millis() % 8;
-  while (matrix[foodX][foodY] == true){
-    foodX = random(0, 8);//millis() % 8;
-    foodY = random(0, 8);//millis() % 8;
-  }
-  matrix[foodX][foodY] = true;
-  if (foodEaten){
-    matrix[prevFoodX][prevFoodY] = false;
-    foodEaten = false;
-  }
-  
-}
-
-void moveSnake(int newX, int newY) {
-    matrix[snake[lenSnake - 1].x][snake[lenSnake - 1].y] = false; // turns off the last led form tail
-    for (int i = lenSnake - 1; i >= 1; i--) {
-      snake[i] = snake[i - 1]; 
-    }
-    if (newX == foodX && newY == foodY) {
-        eatFood();
-        currentTranslationDelay -= 5;
-        newFood();
-        matrix[prevFoodX][prevFoodY] = false;
-    }else{
-      blinkFood();
-    }
-    if(matrix[newX][newY] == 0){ // we don't have collision
-        snake[0].x = newX;
-        snake[0].y = newY;
-        matrix[newX][newY] = true;
-
-    }else{
-      if(newX != foodX && newY != foodY){
-        //collision
-        gameOver = true;
-      }
-
-    }
-  
-
-}
-
-
-void moveRight() {
-  //prevHeadX = headX;
-  //prevHeadY = headY;
-  if (headX < 7) {
-    headX++;
-  } else {
-    headX = 0;
-  }
-  moveSnake(headY, headX);
-  //matrix[headY][headX] = true;
-  //matrix[prevHeadY][prevHeadX] = false;
-  //lc.setLed(0, prevHeadY, prevHeadX, false);
-  //lc.setLed(0, headY, headX, true);
-}
-void moveLeft() {
-  //prevHeadX = headX;
-  //prevHeadY = headY;
-  if (headX > 0) {
-    headX--;
-  } else {
-    headX = 7;
-  }
-  moveSnake(headY, headX);
-  //matrix[headY][headX] = true;
-  // matrix[prevHeadY][prevHeadX] = false;
-  //lc.setLed(0, prevHeadY, prevHeadX, false);
-  //lc.setLed(0, headY, headX, true);
-}
-void moveUp() {
-  //prevHeadX = headX;
-  //prevHeadY = headY;
-  if (headY < 7) {
-    headY++;
-  } else {
-    headY = 0;
-  }
-  moveSnake(headY, headX);
-  //matrix[headY][headX] = true;
-  //matrix[prevHeadY][prevHeadX] = false;
-
-  //lc.setLed(0, prevHeadY, prevHeadX, false);
-  //lc.setLed(0, headY, headX, true);
-}
-void moveDown() {
-  //prevHeadX = headX;
-  //prevHeadY = headY;
-  if (headY > 0) {
-    headY--;
-  } else {
-    headY = 7;
-  }
-  moveSnake(headY, headX);
-  //matrix[headY][headX] = true;
-  //matrix[prevHeadY][prevHeadX] = false;
-  //lc.setLed(0, prevHeadY, prevHeadX, false);
-  //lc.setLed(0, headY, headX, true);
-}
-
-void moveHead() {
-  xValue = analogRead(pinX);
-  yValue = analogRead(pinY);
-  ///am inversat apelul de stanga cu cel de dreata pt ca era mergea invers
-  if (movedX == false && movedY == false) {
-    if (xValue > highThreshold && (movesUp || movesDown)) {
-      //moveRight();
-      movedX = true;
-      movesLeft = false;
-      movesRight = true;
-      movesUp = false;
-      movesDown = false;
-    }
-    if (xValue < lowThreshold && (movesUp || movesDown)) {
-      //moveLeft();
-      movedX = true;
-      movesLeft = true;
-      movesRight = false;
-      movesUp = false;
-      movesDown = false;
-    }
-  }
-
-  if (movedY == false && movedX == false) {
-    if (yValue > highThreshold && (movesRight || movesLeft)) {
-      //moveDown();
-      movedY = true;
-      movesLeft = false;
-      movesRight = false;
-      movesUp = false;
-      movesDown = true;
-    }
-    if (yValue < lowThreshold && (movesRight || movesLeft)) {
-      //moveUp();
-      movedY = true;
-      movesLeft = false;
-      movesRight = false;
-      movesUp = true;
-      movesDown = false;
-    }
-  }
-
-  if (yValue >= lowThreshold && yValue <= highThreshold && movedY) {
-    movedY = false;
-  }
-
-  if (xValue >= lowThreshold && xValue <= highThreshold && movedX) {
-    movedX = false;
-  }
-  if (movesLeft) {
-    currentMillis = millis();
-    if (currentMillis - previousMillis >= currentTranslationDelay) {
-      moveLeft();
-      previousMillis = currentMillis;
-    }
-    //delay(175);
-  }
-  if (movesRight) {
-    currentMillis = millis();
-    if (currentMillis - previousMillis >= currentTranslationDelay) {
-      moveRight();
-      previousMillis = currentMillis;
-    }
-    //delay(175);
-  }
-  if (movesUp) {
-    currentMillis = millis();
-    if (currentMillis - previousMillis >= currentTranslationDelay) {
-      moveUp();
-      previousMillis = currentMillis;
-    }
-    //delay(175);
-  }
-  if (movesDown) {
-    currentMillis = millis();
-    if (currentMillis - previousMillis >= currentTranslationDelay) {
-      moveDown();
-      previousMillis = currentMillis;
-    }
-    //delay(175);
-  }
-
-}
-
-void printMap() {
-  /*if (foodX != 0 && foodY != 0) {
-    matrix[0][0] = 0;
-  }*/
+void printMap(bool matrix[8][8]) {
   for (int row = 0; row < 8; row++) {
     for (int col = 0; col < 8; col++) {
-      //Serial.print(matrix[row][col]);
-      //Serial.print(" ");
-
       lc.setLed(0, col, row, matrix[col][row]);
     }
-    //Serial.println("");
   }
-  //matrix[prevFoodX][prevFoodY] = false;
-  //Serial.println("");
 
 }
 
 void printGameOverMatrix(){
-  /*if (foodX != 0 && foodY != 0) {
-    matrix[0][0] = 0;
-  }*/
   for (int row = 0; row < 8; row++) {
     for (int col = 0; col < 8; col++) {
-      //Serial.print(matrix[row][col]);
-      //Serial.print(" ");
-
       lc.setLed(0, col, row, gameOverMatrix[col][row]);
     }
-    //Serial.println("");
   }
-  //matrix[prevFoodX][prevFoodY] = false;
-  //Serial.println("");
-
 }
 
 void setup() {
@@ -378,76 +176,36 @@ void setup() {
       delay(25);
     }
   }
-  ///la initializare vreau ca linia sa fie aceeasi, doar coloana sa varieze
-  snake[0].x = headY;
-  snake[0].y = headX;
-
-  snake[1].x = headY;
-  snake[1].y = headX - 1;
-
-  snake[2].x = headY;
-  snake[2].y = headX - 2;
-  currentTranslationDelay = initialTranslationDelay;
-  //snake[3].x = headY;
-  //snake[3].y = headX - 3;
-  //here I put the snake on the map
-  /*matrix[snake[0].x][snake[0].y] = true;
-    matrix[snake[1].x][snake[1].y] = true;
-    matrix[snake[2].x][snake[2].y] = true;'
-  */
-  matrix[foodX][foodY] = true;
-
-  // matrix[snake[3].x][snake[2].y] = true;
-  /*for (int i =0; i < 3; i++){
-    Serial.print("snakeX = ");
-    Serial.println(snake[i].x);
-    Serial.print(" snakeY = ");
-    Serial.println(snake[i].y);
-    }*/
-  /*delay(50);
-    for(int row = 0; row < 8; row++){
-    for(int col = 0; col < 8; col++){
-      lc.setLed(0, col, row, false);
-      delay(25);
-    }
-    }*/
-  //matrix[headY][headX] = true;
-  // lc.setLed(0, headY, headX, true);
-  //lc.setLed(0, 0, 1, true);
-  //lc.setLed(0, 0, 3, true);
-  //lc.setLed(0, 1, 7, true);
+  lcd.begin(16, 2);
+  lcd.print("Hello, world!");
+  lcd.setCursor(0, 1);
+  lcd.print("Ci faci uai?");
 }
 
 void loop() {
-  if(!gameOver){
-    moveHead();
-    // moveSnake();
-    //blinkFood();
-    
-    printMap();
-  }else{
-    printGameOverMatrix();
+  switch (level){
+    case 1: {
+      level1();
+      break; 
+    }
+    case 2: {
+      level1();
+      break;
+    }
+    case 3: {
+      level3();
+      break;
+    }
+    case 4: {
+      level4();
+      break;
+    }
+    case 5: {
+      level5();
+      break;
+    }
+    default:{
+      //ai terminat jocul
+    }
   }
-  // if (foodEaten){
-  //   newFood();
-  // }
-
-  //delay(00);
-  //matrix[prevFoodX][prevFoodY] = false;
-  ///snake states
-  /*for (int i = 0; i < 3; i++) {
-    Serial.print("snakeX = ");
-    Serial.println(snake[i].x);
-    Serial.print(" snakeY = ");
-    Serial.println(snake[i].y);
-
-    Serial.println("******");
-  }*/
-  /*for (int i =0; i < 3; i++){
-    Serial.print("snakeX = ");
-    Serial.print(snake[i].x);
-    Serial.print(" snakeY = ");
-    Serial.print(snake[i].y);
-    }*/
-  ///pui in matrice 1 pe pozitia headX headY
 }
