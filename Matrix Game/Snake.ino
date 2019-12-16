@@ -19,6 +19,7 @@ const int clkPin = 11;
 const int loadPin = 10;
 const int noOfDrivers = 1;
 
+
 //menu
 int arrowPoz = 0;
 int arrowPozIncreased = false;
@@ -63,8 +64,8 @@ bool movesLeft = false;
 bool movesRight = true;
 bool movesUp = false;
 bool movesDown = false;
-int lenSnake = 3;//4;
-int passLevelLength = 9;//6;
+int lenSnake = 3;
+int passLevelLength = 9;
 
 //food
 bool foodEaten = false;
@@ -77,7 +78,7 @@ int curBlinkFoodMillis = 0;
 int prevBlinkFoodMillis = 0;
 
 //levels
-int level = 4;//2;
+int level = 1;
 bool levelStarted = false;
 bool youCanPassLevel = false;
 
@@ -386,26 +387,8 @@ void infoSection(){
 }
 
 void gameIsOver() {
-  /*lcd.clear();
-  lcd.setCursor(0, 0);
-  //lcd.print("Game over!");
-  lcd.autoscroll();
-  //lcd.print(endingMessage1);
-  /*for(int i = 0; i < 16; i++){
-    lcd.print(endingMessage1[i]);
-    delay(100);
-  }
-  lcd.noAutoscroll();
-  lcd.setCursor(0, 1);
-  //lcd.print("Press");
-  lcd.setCursor(0, 1);
-  //lcd.print("button to exit.");
-  switchValue = digitalRead(pinSw);
-  if (!switchValue) {
-    movedX = false;
-    gameOver = false;
-    gameStarted = false;
-  }*/
+  gameStarted = false;
+  gameOver = false;
 }
 
 void sectionNav() {
@@ -528,36 +511,5 @@ void loop() {
     menuNav();
   }else{
       startSection();
-  }
-  /*if(!gameOver){
-  switch (level){
-      case 1: {
-        level1();
-        break; 
-      }
-      case 2: {
-        level2();
-        break;
-      }
-      case 3: {
-        level3();
-        break;
-      }
-      case 4: {
-        level4();
-        break;
-      }
-      case 5: {
-        level5();
-        break;
-      }
-    }
-    gameStarted = true;
-  }else{
-    printGameOverMatrix();
-    gameStarted = false;
-  }*/
-  //Serial.println(switchValue);
-  /**/
-  
+  }  
 }

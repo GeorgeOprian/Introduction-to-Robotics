@@ -32,11 +32,13 @@ void eatFood (bool matrix[8][8]) {
 void newFood(bool matrix[8][8]){
   prevFoodX = foodX;
   prevFoodY = foodY;
-  foodX = random(0, 8);//millis() % 8;
-  foodY = random(0, 8);//millis() % 8;
-  while (matrix[foodX][foodY] == true){
-    foodX = random(0, 8);//millis() % 8;
-    foodY = random(0, 8);//millis() % 8;
+  foodX = random(0, 8);
+  foodY = random(0, 8);
+  if(matrix[foodX][foodY] == true){
+    while (matrix[foodX][foodY] == true){
+      foodX = random(0, 8);
+      foodY = random(0, 8);
+    }
   }
   matrix[foodX][foodY] = true;
   if (foodEaten){
