@@ -1,3 +1,10 @@
+void blinkFood(bool matrix[8][8]) {
+  curBlinkFoodMillis = millis();
+  if (curBlinkFoodMillis - prevBlinkFoodMillis >= blinkFoodInterval) {
+    prevBlinkFoodMillis = curBlinkFoodMillis;
+    matrix[foodX][foodY] = !matrix[foodX][foodY];
+  }
+}
 void moveSnake(bool matrix[8][8], int newX, int newY) {
     matrix[snake[lenSnake - 1].x][snake[lenSnake - 1].y] = false; // turns off the last led form tail
     for (int i = lenSnake - 1; i >= 1; i--) {
@@ -7,7 +14,7 @@ void moveSnake(bool matrix[8][8], int newX, int newY) {
         eatFood(matrix);
         currentTranslationDelay -= 5;
         newFood(matrix);
-        matrix[prevFoodX][prevFoodY] = false;
+        //matrix[prevFoodX][prevFoodY] = false;
     }else{
       blinkFood(matrix);
     }

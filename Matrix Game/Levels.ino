@@ -1,4 +1,3 @@
-
 void initializeLevel(bool matrix[8][8]){
   headX = initialialHeadX;
   headY = initialialHeadY;
@@ -17,6 +16,8 @@ void initializeLevel(bool matrix[8][8]){
   movesDown = false;
   currentTranslationDelay = initialTranslationDelay;
   matrix[foodX][foodY] = true;
+  prevFoodX = foodX;
+  prevFoodY = foodY;
   youCanPassLevel = false;
 }
 void level1(){
