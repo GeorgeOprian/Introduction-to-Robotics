@@ -19,6 +19,7 @@ The game logic is simple. You control a dot on the screen and that dot will be f
 
 ## Requirements
 * Hardware:
+	* Arduino Uno
 	* 8x8 LED matrix
 	* LCD
 	* Joystick
