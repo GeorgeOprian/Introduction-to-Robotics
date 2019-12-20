@@ -231,22 +231,14 @@ bool inInfo = false;
 
 bool gameStarted = false;
 
+//this function turns on the LEDs of the matrix when the snake is on those positions
 void putSnakeOnMatrix(bool matrix[8][8]){
   for(int i = 0; i < lenSnake; i++){
     matrix[snake[i].x][snake[i].y] = true;
   }
-  //matrix[foodX][foodY] = true;
 }
 
-void deleteSnakeFromMatrix(bool matrix[8][8]){
-  for(int i = 0; i < lenSnake; i++){
-    matrix[snake[i].x][snake[i].y] = false;
-  }
-  if (prevFoodX != foodX && prevFoodY != foodY){
-    matrix[prevFoodX][prevFoodY] = false;
-  }
-}
-
+//lights up the physical matrix from the virtual one
 void printMap(bool matrix[8][8]) {
   putSnakeOnMatrix(matrix);
   for (int row = 0; row < 8; row++) {
@@ -254,9 +246,8 @@ void printMap(bool matrix[8][8]) {
       lc.setLed(0, col, row, matrix[col][row]);
     }
   }
-  //deleteSnakeFromMatrix(matrix);
 }
-
+//this function prints a matrix which will inform you that the game is over
 void printGameOverMatrix(){
   for (int row = 0; row < 8; row++) {
     for (int col = 0; col < 8; col++) {
@@ -264,7 +255,7 @@ void printGameOverMatrix(){
     }
   }
 }
-
+//resets the contet of the current matrix to the intial one
 void reinitialize(bool initial[8][8], bool current[8][8]){
   for(int i = 0; i< 8; i++){
     for(int j = 0; j<8; j++){
@@ -272,7 +263,7 @@ void reinitialize(bool initial[8][8], bool current[8][8]){
     }
   }
 }
-
+//resets all the matrices when a new game is starting
 void reinitializeMatrices(){
   reinitialize(initialLvl1Matrix, lvl1Matrix);
   reinitialize(initialLvl2Matrix, lvl2Matrix);
@@ -280,7 +271,7 @@ void reinitializeMatrices(){
   reinitialize(initialLvl4Matrix, lvl4Matrix);
   reinitialize(initialLvl5Matrix, lvl5Matrix);
 }
-
+//this is the first page of the menu
 void page1(){
     arrowPoz = 1;//pe prima linie
     
@@ -289,6 +280,7 @@ void page1(){
     lcd.setCursor(1, 1);
     lcd.print(highScore);
 }
+//this is the second page of the menu
 void page2(){
     arrowPoz = 1;//pe prima linie
     lcd.setCursor(0, arrowPoz);
@@ -298,6 +290,7 @@ void page2(){
     lcd.setCursor(1, 1);
     lcd.print(info);
 }
+//this function changes the pages of the menu from the arrow position
 void changePage(){
     if(arrowPoz == 2){
         page++;
@@ -312,7 +305,7 @@ void changePage(){
         page = 2;
     }
 }
-
+///fuction that stars the game and print Score on LCD
 void startSection() {
   if (switchPressed){
     gameOver = true;
@@ -352,7 +345,7 @@ void startSection() {
   lcd.setCursor(7, 0);
   lcd.print(score);
  }
-
+//prints the highscore on LCD when the user enters the high score section
 void highScoreSection() {
   lcd.clear();
   highScoreStored = EEPROM.read(0);
@@ -363,7 +356,7 @@ void highScoreSection() {
   lcd.print(highScoreStored);
   EEPROM.write(0, highScoreStored);
 }
-
+//in this function you suppose to adjust the starting level and the speed but is unimplented
 void settingsSection() {
   lcd.clear();
   lcd.setCursor(0, settingsArrrowPoz);
@@ -372,11 +365,22 @@ void settingsSection() {
   lcd.print("StartingSpeed: ");
   lcd.setCursor(15, 0);
   lcd.print(intialSpeed);
-  lcd.setCursor(1, 1);
+  /*lcd.setCursor(1, 1);
   lcd.print("StartingLevel: ");
   lcd.setCursor(15, 1);
-  lcd.print(startingLevel);
+  lcd.print(startingLevel);*/
+  /*
+
+
+
+            Daca se misca Y creste viteza initiala cred ca ar fi suficient pentru setari
+            Modifica translation delay si scorul
+
+
+
+  */
 }
+//prints the information of the game such as creator's name, game name and a github link
 void infoSection(){
   lcd.clear();
   lcd.setCursor(0, 0);
@@ -385,12 +389,12 @@ void infoSection(){
   lcd.print(gameInfo);
 
 }
-
+//function that stops the game
 void gameIsOver() {
   gameStarted = false;
   gameOver = false;
 }
-
+///this function selects the section to display on the LCD 
 void sectionNav() {
   if (page == 0){
     if (arrowPoz == 0){
@@ -407,7 +411,7 @@ void sectionNav() {
     }
   }
 }
-
+//this functon moves the arrow, selects the page and prints the main interface of the menu
 void menuNav () {
   if (xValue > highThreshold) {
     enterSelection = true;
@@ -502,11 +506,7 @@ void loop() {
   xValue = analogRead(pinX);
   yValue = analogRead(pinY);
   switchValue = analogRead(swPin);
-  /*if(switchValue < 20){
-    switchPressed = true;
-  }else{
-    switchPressed = false;
-  }*/
+  
   if(!gameStarted){
     menuNav();
   }else{

@@ -1,3 +1,7 @@
+//sets the matrix that will be dispalyed at every level
+//initialize the snake, every new level the length of the snake will be 3
+//sets the default movement of the snake to left
+//spawns food on map
 void initializeLevel(bool matrix[8][8]){
   headX = initialialHeadX;
   headY = initialialHeadY;
@@ -20,6 +24,8 @@ void initializeLevel(bool matrix[8][8]){
   prevFoodY = foodY;
   youCanPassLevel = false;
 }
+//functions level1...5 call initializeLevel() before starting the level
+//they also verify if the game is over
 void level1(){
   if (!levelStarted){
     initializeLevel(lvl1Matrix);

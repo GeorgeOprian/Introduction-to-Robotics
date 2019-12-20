@@ -1,3 +1,5 @@
+//function to eat the food, increase the snake length
+//and increment the score
 void eatFood (bool matrix[8][8]) {
   snake[lenSnake].x = snake[lenSnake - 1].x;
   snake[lenSnake].y = snake[lenSnake - 1].y;
@@ -28,17 +30,15 @@ void eatFood (bool matrix[8][8]) {
     }
   }
 }
-
+//function for spawning new food 
 void newFood(bool matrix[8][8]){
   prevFoodX = foodX;
   prevFoodY = foodY;
-  foodX = random(0, 8);
-  foodY = random(0, 8);
-  if(matrix[foodX][foodY] == true){
-    while (matrix[foodX][foodY] == true){
-      foodX = random(0, 8);
-      foodY = random(0, 8);
-    }
+  foodX = millis() % 8;//random(0, 8);
+  foodY = millis() % 8;//random(0, 8);
+  while (matrix[foodX][foodY] == true){
+    foodX = millis() % 8;//random(0, 8);
+    foodY = millis() % 8;//random(0, 8);
   }
   matrix[foodX][foodY] = true;
   if (foodEaten){
