@@ -11,11 +11,13 @@ The game logic is simple. You control a dot on the screen and that dot will be f
 * You control your snake with the joystick:
 	* if the snake moves horizontally you can only make him go up or down using the joystick Y axis
 	* if the snakes moves vertically you can only make him go up or down using the joystick X axis
-	* to change the game setting you can always use the "Setings" section in the menu. You can adjust the speed of the snake and, also, the type of field.
+	* you can restart the game by pressing the red button on the Arduino board
 	
 * Eating the food spawned will grow your snake in size.
 
-* Avoid hitting your own tail or the walls, if you hit them the game will be over.
+* Avoid hitting your own tail or the walls, if you hit one of them the game will end.
+* To pass a level you have to eat at least 6 pieces of food, but you can keep playing the same level only if you don't take the snake out of the matrix
+* As a tip, if you want to make high score keep playing a higher level which you feel comfortable with
 
 ## Requirements
 * Hardware:
@@ -25,5 +27,7 @@ The game logic is simple. You control a dot on the screen and that dot will be f
 	* Joystick
 	* MAX7219 Driver
 
-
+## Bugs
+* Sometimes the food spawns on walls, if this happends you may be lucky and you won't die if you eat that food.
+* I didn't implemented the setting section, so you can't set the starting level or the initial speed.
 
