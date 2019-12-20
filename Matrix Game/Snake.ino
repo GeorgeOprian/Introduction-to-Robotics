@@ -215,7 +215,7 @@ int currentMillis = 0;
 int previousMillis = 0;
 
 //settings
-int intialSpeed = 1;
+int initialSpeed = 1;
 int startingLevel = 1;
 int settingsArrrowPoz = 0;
 
@@ -364,21 +364,11 @@ void settingsSection() {
   lcd.setCursor(1, 0);
   lcd.print("StartingSpeed: ");
   lcd.setCursor(15, 0);
-  lcd.print(intialSpeed);
-  /*lcd.setCursor(1, 1);
+  lcd.print(initialSpeed);
+  lcd.setCursor(1, 1);
   lcd.print("StartingLevel: ");
   lcd.setCursor(15, 1);
-  lcd.print(startingLevel);*/
-  /*
-
-
-
-            Daca se misca Y creste viteza initiala cred ca ar fi suficient pentru setari
-            Modifica translation delay si scorul
-
-
-
-  */
+  lcd.print(startingLevel);
 }
 //prints the information of the game such as creator's name, game name and a github link
 void infoSection(){
