@@ -24,7 +24,7 @@ The game logic is simple. You control a dot on the screen and that dot will be f
 * The first level has no walls
 * The levels from two to five have the next set of walls, where 1 represents a wall:
 	* Level 2 :
-		  1 1 1 0 0 1 1 1'\n'
+		  1 1 1 0 0 1 1 1 '\n'
 		  1 0 0 0 0 0 0 1
 		  1 0 0 0 0 0 0 1
 		  0 0 0 0 0 0 0 0
