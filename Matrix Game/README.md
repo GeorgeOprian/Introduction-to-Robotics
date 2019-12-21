@@ -30,7 +30,7 @@ The game logic is simple. You control a dot on the screen and that dot will be f
 
 ## Bugs
 * Sometimes the food spawns on walls, if this happends you may be lucky and you won't die if you eat that food.
-* I didn't implemented the setting section, so you can't set the starting level or the initial speed.
+* I didn't implemented the settings section, so you can't set the starting level or the initial speed.
 
 ## Video: https://youtu.be/yKf464x9XFI
 
