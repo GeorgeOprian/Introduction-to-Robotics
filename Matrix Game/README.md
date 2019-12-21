@@ -19,6 +19,50 @@ The game logic is simple. You control a dot on the screen and that dot will be f
 * To pass a level you have to eat at least 6 pieces of food, but you can keep playing the same level only if you don't take the snake out of the matrix
 * As a tip, if you want to make high score keep playing a higher level which you feel comfortable with
 
+### Levels
+#### The game has 5 levels:
+	* The first level has no walls
+	* The levels from two to five have the next set of walls, where 1 represents a wall:
+	* Level 2 :
+		  1 1 1 0 0 1 1 1
+		  1 0 0 0 0 0 0 1
+		  1 0 0 0 0 0 0 1
+		  0 0 0 0 0 0 0 0
+		  0 0 0 0 0 0 0 0
+		  1 0 0 0 0 0 0 1
+		  1 0 0 0 0 0 0 1
+		  1 1 1 0 0 1 1 1
+		
+	* Level 3 
+		  1 0 0 0 0 0 0 1
+		  0 0 0 0 0 0 0 0
+		  0 0 0 1 1 0 0 0
+		  0 0 0 0 0 0 0 0
+		  0 0 0 0 0 0 0 0
+		  0 0 0 1 1 0 0 0
+		  0 0 0 0 0 0 0 0
+		  1 0 0 0 0 0 0 1
+	* Level 4 
+		  1 0 0 0 0 0 0 1
+		  0 0 0 0 0 0 0 0
+		  0 0 1 1 1 1 0 0
+		  0 0 0 0 0 0 0 0
+		  0 0 0 0 0 0 0 0
+		  0 0 1 1 1 1 0 0
+		  0 0 0 0 0 0 0 0
+		  1 0 0 0 0 0 0 1
+	* Level 5 
+		  1 1 0 0 0 0 1 1
+		  1 0 0 0 0 0 0 1
+		  0 0 1 1 1 1 0 1
+		  0 0 0 0 0 0 0 0
+		  0 0 0 0 0 0 0 0
+		  1 0 1 1 1 1 0 1
+		  1 0 0 0 0 0 0 1
+		  1 1 1 0 0 1 1 1
+	
+
+
 ## Requirements
 * Hardware:
 	* Arduino Uno
