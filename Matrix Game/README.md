@@ -34,4 +34,4 @@ The game logic is simple. You control a dot on the screen and that dot will be f
 ## Video: https://youtu.be/yKf464x9XFI
 
 
-!.[.] (Components.jpeg)
+![](Components.jpeg)
