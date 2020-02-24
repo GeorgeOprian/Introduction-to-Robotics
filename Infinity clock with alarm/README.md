@@ -7,5 +7,5 @@ The infinity mirror is made of 2 mirros facing one another. One of them is a nor
 The WS2812b LED strip consists of 60 individually adressable LEDs. There are 3 LED lights representing hours (red), minutes (green) and seconds (blue) which rotate in a clockwise direction. In order to set the alarm, the user has to pick the hour, using the first 2 buttons: the leftmost button for decreasing the value and the other one for increasing it. The minutes can be set by pressing the next 2 buttons, in the same way as before. The last button is used for activating the alarm. 
  
  
- ##Photo
+ ## Photo
  
