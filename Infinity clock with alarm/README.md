@@ -21,5 +21,5 @@ https://docs.google.com/spreadsheets/d/1Htry010sDG5Vxl1XxuDkIDsEU6a6pIBbHVVmY9l-
  https://youtu.be/q1fAT-T3IGI
  
  ## Bugs
- In the video, the alarm part of the project doesn't work. This is because the circuit broke before the presentation.
+ In the video, the alarm part of the project doesn't work. This is because the circuit broke before the presentation, but the code is good.
  
