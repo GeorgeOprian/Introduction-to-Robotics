@@ -17,3 +17,6 @@ https://docs.google.com/spreadsheets/d/1Htry010sDG5Vxl1XxuDkIDsEU6a6pIBbHVVmY9l-
  ## Photo of the project
  ![](Clock.jpeg)
  
+ ## Video
+ https://youtu.be/q1fAT-T3IGI
+ 
